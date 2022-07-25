@@ -13,9 +13,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,16 +37,40 @@ public class SetmealController {
     @Autowired
     private SetmealDishService setmealDishService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     /**
      * 新增套餐
      * @param setmealDto
      * @return
      */
     @PostMapping
+    @CacheEvict(value="setmealCache",allEntries=true)
     public R<String> addSetmeal(@RequestBody SetmealDto setmealDto){
         log.info("套餐：{}",setmealDto);
         setmealService.saveWithDish(setmealDto);
         return R.success("添加成功");
+    }
+
+    @PutMapping
+    @CacheEvict(value="setmealCache",allEntries=true)
+    public R<String> editSetmeal(@RequestBody SetmealDto setmealDto){
+        log.info("套餐：{}",setmealDto);
+        setmealService.updateWithDish(setmealDto);
+        return R.success("套餐修改成功");
+    }
+
+    /**
+     * 根据套餐id查询套餐信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<SetmealDto> getSetmeal(@PathVariable Long id){
+        log.info("{}",id);
+        SetmealDto setmealDto = setmealService.getSetmeal(id);
+        return R.success(setmealDto);
     }
 
     /**
@@ -102,6 +131,7 @@ public class SetmealController {
      * @return
      */
     @DeleteMapping
+    @CacheEvict(value="setmealCache",allEntries=true)
     public R<String> delete(@RequestParam List<Long> ids){
         log.info("ids：{}",ids);
         setmealService.deleteWithSetmeal(ids);
@@ -113,14 +143,25 @@ public class SetmealController {
      * @param setmeal
      * @return
      */
-    @GetMapping("list")
+
+    @GetMapping("/list")
+    @Cacheable(value ="setmealCache",key = "#setmeal.categoryId+'_'+#setmeal.status")
     public R<List<Setmeal>> list(Setmeal setmeal){
         log.info("查询套餐数据{}",setmeal);
+        List<Setmeal> list = null;
+        String key = "setmeal_"+setmeal.getCategoryId()+"_"+setmeal.getStatus();
+        //从缓存中查数据
+       //list = (List<Setmeal>) redisTemplate.opsForValue().get(key);
+       //if(list !=null){
+       //    return R.success(list);
+       //}
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<Setmeal>();
         queryWrapper.eq(setmeal.getCategoryId()!= null, Setmeal::getCategoryId,setmeal.getCategoryId());
         queryWrapper.eq(setmeal.getStatus()!=null,Setmeal::getStatus,setmeal.getStatus());
         queryWrapper.orderByDesc(Setmeal::getUpdateTime);
-        List<Setmeal> list = setmealService.list(queryWrapper);
+        list = setmealService.list(queryWrapper);
+        //添加到缓存
+        //redisTemplate.opsForValue().set(key,list,5, TimeUnit.MINUTES);
         return R.success(list);
     }
 

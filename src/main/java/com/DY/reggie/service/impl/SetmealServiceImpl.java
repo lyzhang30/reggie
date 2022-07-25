@@ -11,6 +11,7 @@ import com.DY.reggie.service.SetmealService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,12 +27,13 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
     private SetmealDishService setmealDishService;
 
 
+
     /**
      * 保存套餐，同时需要保存套餐和菜品之间的关系
      * @param setmealDto
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveWithDish(SetmealDto setmealDto) {
         //保存套餐的基本信息
         this.save(setmealDto);
@@ -47,12 +49,34 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
     }
 
     /**
+     * 修改套餐，同时需要删除原有的数据，再重新插入修改后的数据
+     * @param setmealDto
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateWithDish(SetmealDto setmealDto) {
+        Long id = setmealDto.getId();
+        if(id ==null){
+            throw new CustomException("请填入套餐信息");
+        }
+        //删除套餐信息
+        this.removeById(id);
+        //删除口味信息
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(id!=null,SetmealDish::getSetmealId,id);
+        setmealDishService.remove(queryWrapper);
+        //保存口味信息
+        saveWithDish(setmealDto);
+
+    }
+
+    /**
      * 停售和启售套餐
      * @param status
      * @param ids
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateWithStatus(Integer status, String ids) {
         String [] idsList = ids.split(",");
         if(idsList.length >0){
@@ -70,7 +94,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
      * @param ids
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteWithSetmeal(List<Long> ids) {
         //查询套餐是否可以删除
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
@@ -91,6 +115,19 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
         //删除关系表的数据
         setmealDishService.remove(lambdaQuery);
 
+    }
+
+    @Override
+    public SetmealDto getSetmeal(Long id) {
+        Setmeal setmeal = this.getById(id);
+        SetmealDto setmealDto = new SetmealDto();
+        BeanUtils.copyProperties(setmeal,setmealDto);
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(id != null,SetmealDish::getSetmealId,setmeal.getId());
+        queryWrapper.orderByDesc(SetmealDish::getUpdateTime);
+        List<SetmealDish> list = setmealDishService.list(queryWrapper);
+        setmealDto.setSetmealDishes(list);
+        return setmealDto;
     }
 
 

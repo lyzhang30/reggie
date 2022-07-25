@@ -14,6 +14,11 @@ public interface SetmealService extends IService<Setmeal> {
     public void saveWithDish(SetmealDto setmealDto);
 
     /**
+     * 修改套餐，同时需要删除原有的数据，再重新插入修改后的数据
+     * @param setmealDto
+     */
+    public void updateWithDish(SetmealDto setmealDto);
+    /**
      * 批量停售套餐，需要更新status
      */
     public void updateWithStatus(Integer status, String ids);
@@ -23,5 +28,7 @@ public interface SetmealService extends IService<Setmeal> {
      * @param ids
      */
     public void deleteWithSetmeal(List<Long> ids);
+
+    public SetmealDto getSetmeal(Long id);
 
 }
