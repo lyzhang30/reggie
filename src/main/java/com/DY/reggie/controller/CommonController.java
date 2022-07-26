@@ -4,6 +4,10 @@ import com.DY.reggie.common.R;
 ;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 import java.util.UUID;
 
 @RestController
@@ -68,7 +73,6 @@ public class CommonController {
             FileInputStream fileInputStream = new FileInputStream(new File(basePath+name));
             //输出流，通过输出流将文件写回浏览器
             ServletOutputStream outputStream = response.getOutputStream();
-
             response.setContentType("image/jpeg");
             int len =0;
             byte [] bytes = new byte[1024];
@@ -86,4 +90,24 @@ public class CommonController {
         }
 
     }
+
+    /**
+     * 下载文件
+     * @param file
+     * @return
+     */
+    private ResponseEntity<FileSystemResource> export(File file) {
+        if (file == null) {
+            return null;
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Content-Disposition", "attachment; filename=" + file.getName());
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        headers.add("Last-Modified", new Date().toString());
+        headers.add("ETag", String.valueOf(System.currentTimeMillis()));
+        return ResponseEntity.ok().headers(headers).contentLength(file.length()).contentType(MediaType.parseMediaType("application/octet-stream")).body(new FileSystemResource(file));
+    }
+
 }
