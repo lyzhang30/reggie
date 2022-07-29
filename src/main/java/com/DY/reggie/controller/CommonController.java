@@ -80,7 +80,6 @@ public class CommonController {
                 outputStream.write(bytes,0,len);
                 outputStream.flush();
             }
-
             //关闭资源
             outputStream.close();
             fileInputStream.close();
