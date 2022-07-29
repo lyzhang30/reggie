@@ -30,8 +30,6 @@ import java.util.List;
 public class WebMvcConfig extends WebMvcConfigurationSupport {
     /**
      * 设置静态资源
-     *
-     *
      * @param registry
      */
     @Override
