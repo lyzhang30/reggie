@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableCaching
 public class ReggieApplication {
     public static void main(String[] args) {
-
         SpringApplication.run(ReggieApplication.class,args);
         log.info("启动成功");
     }
