@@ -11,6 +11,8 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
@@ -34,14 +36,11 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
      */
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        log.info("开始进行静态资源映射");
-        registry.addResourceHandler("/","/backend/**").addResourceLocations("classpath:/backend/");
-        registry.addResourceHandler("/","/front/**").addResourceLocations("classpath:/front/");
+        log.info("开始进行静态资源映射...");
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
-
+        registry.addResourceHandler("/backend/**").addResourceLocations("classpath:/backend/");
+        registry.addResourceHandler("/front/**").addResourceLocations("classpath:/front/");
     }
 
     /**
@@ -68,24 +67,38 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.DY.reggie"))
+                .apis(RequestHandlerSelectors.basePackage("com.DY.reggie.controller"))
+                .paths(PathSelectors.any())
                 .build();
-
     }
 
+    /**
+     *
+     */
     private ApiInfo apiInfo(){
-        Contact contact = new Contact("大勇","https://blog.csdn.net/zly03?spm=1000.2115.3001.5343","lyzhang@163.com");
-        return new ApiInfo(
-                "Swagger学习",//标题
-                "测试",
-                "v1.0",//版本
-                "https://blog.csdn.net/zly03?spm=1000.2115.3001.5343",
-                contact,
-                "Apache 2.0许可",//许可
-                "http://www.apache.org/licenses/LICENSE-2.0",
-                new ArrayList<>()//扩展
-        );
+        return new ApiInfoBuilder()
+                .title("瑞吉外卖")
+                .version("1.0.0")
+                .description("外卖接口文档")
+                .build();
     }
+
+    /**
+     * Swagger版本
+     */
+    //private ApiInfo apiInfo(){
+    //    Contact contact = new Contact("大勇","https://blog.csdn.net/zly03?spm=1000.2115.3001.5343","lyzhang@163.com");
+    //    return new ApiInfo(
+    //            "Swagger学习",//标题
+    //            "测试",
+    //            "v1.0",//版本
+    //            "https://blog.csdn.net/zly03?spm=1000.2115.3001.5343",
+    //            contact,
+    //            "Apache 2.0许可",//许可
+    //            "http://www.apache.org/licenses/LICENSE-2.0",
+    //            new ArrayList<>()//扩展
+    //    );
+    //}
 
 
 

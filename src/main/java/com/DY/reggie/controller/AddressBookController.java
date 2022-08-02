@@ -6,6 +6,7 @@ import com.DY.reggie.entity.AddressBook;
 import com.DY.reggie.service.AddressBookService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import io.swagger.annotations.ApiModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/addressBook")
+@ApiModel(value ="")
 public class AddressBookController {
     @Autowired
     private AddressBookService addressBookService;

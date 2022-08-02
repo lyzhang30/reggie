@@ -5,6 +5,9 @@ import com.DY.reggie.entity.Category;
 import com.DY.reggie.service.CategoryService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/category")
+@Api(value = "菜品和套餐接口")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
@@ -23,7 +27,8 @@ public class CategoryController {
      * @return
      */
     @PostMapping()
-    public R<String> save(@RequestBody Category category) {
+    @ApiOperation(value = "新增菜品和套餐")
+    public R<String> save(@ApiParam(value = "菜品类型：菜品、套餐") @RequestBody Category category) {
         log.info(category.toString());
         categoryService.save(category);
         return R.success("新增分类成功");
@@ -36,7 +41,9 @@ public class CategoryController {
      * @return
      */
     @GetMapping("/page")
-    public R<Page<Category>> getCategoryPage(int page ,int pageSize){
+    @ApiOperation(value = "分页查询菜品信息")
+    public R<Page<Category>> getCategoryPage(@ApiParam(value = "当前页码") int page ,
+                                             @ApiParam(value = "页数") int pageSize){
         log.info("page:{},pageSize:{}",page,pageSize);
         //构造分页构器
         Page pageInfo = new Page(page,pageSize);
@@ -67,7 +74,8 @@ public class CategoryController {
      * @return
      */
     @PutMapping
-    public R<String> editById(@RequestBody Category category){
+    @ApiOperation(value = "修改分类的信息")
+    public R<String> editById(@ApiParam(value = "分类信息") @RequestBody Category category){
         log.info("修改分类信息：{}",category);
         categoryService.updateById(category);
         return R.success("修改成功");
@@ -79,6 +87,7 @@ public class CategoryController {
      * @return
      */
     @GetMapping("/list")
+    @ApiOperation(value ="根据分类信息查询分类的菜品信息")
     public R<List<Category>> getList(Category category){
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<Category>();
         //添加条件
