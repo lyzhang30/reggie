@@ -6,10 +6,12 @@ import com.DY.reggie.service.UserService;
 import com.DY.reggie.utils.ValidateCodeUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +45,8 @@ public class UserController {
      * @return
      */
     @ApiOperation(value = "获取验证码")
-    @PostMapping("/sendMsg")
-    public R<String> sendMsg(@RequestBody User user,HttpSession session){
+    @PostMapping(value = "/sendMsg",produces = MediaType.APPLICATION_JSON_VALUE)
+    public R<String> sendMsg(@ApiParam(value ="用户信息") @RequestBody User user, HttpSession session){
         String phone = user.getPhone();
         if(!StringUtils.isEmpty(phone)){
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
@@ -66,7 +68,8 @@ public class UserController {
      */
 
     @PostMapping("/login")
-     public R<User> login(@RequestBody Map map, HttpSession session){
+    @ApiOperation(value = "登录")
+     public R<User> login(@ApiParam("将登录信息封装成一个Map对象，包括code,phone") @RequestBody Map map, HttpSession session){
          log.info("map:{},",map.toString());
          String code = map.get("code").toString();
          //获取手机号

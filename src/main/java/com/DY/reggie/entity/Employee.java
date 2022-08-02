@@ -2,21 +2,21 @@ package com.DY.reggie.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.io.Serializable;
 
+
 /**
- * 员工信息(Employee)实体类
- *
- * @author makejava
- * @since 2022-07-09 20:50:10
- */
+*@author zhanglianyong
+*@date 2022/8/2
+*/
 
 @Data
-
+@ApiModel("员工信息")
 public class Employee  implements Serializable{
     private static final long serialVersionUID = 722107756994976193L;
     /**

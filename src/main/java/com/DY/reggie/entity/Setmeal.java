@@ -10,6 +10,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+*@author zhanglianyong
+*@date 2022/8/2
+*/
 @Data
 @ApiModel("套餐")
 public class Setmeal implements Serializable {

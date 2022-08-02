@@ -2,12 +2,18 @@ package com.DY.reggie.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+*@author zhanglianyong
+*@date 2022/8/2
+*/
 @Data
+@ApiModel("菜品口味明细")
 public class DishFlavor implements Serializable {
     private static final long serialVersionUID = 1L;
 

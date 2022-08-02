@@ -5,6 +5,9 @@ import com.DY.reggie.common.R;
 import com.DY.reggie.entity.ShoppingCart;
 import com.DY.reggie.service.ShoppingCartService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +22,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/shoppingCart")
-
+@Api("购物车控制类")
 public class ShoppingCartController {
 
     @Autowired
@@ -30,6 +33,7 @@ public class ShoppingCartController {
      * @return
      */
     @GetMapping("/list")
+    @ApiOperation("获取购物车的列表信息")
     public R<List<ShoppingCart>> list(){
         log.info("当前用户id：{}",BaseContext.getCurrentId());
         log.info("查看购物车");
@@ -46,7 +50,8 @@ public class ShoppingCartController {
      * @return
      */
     @PostMapping("/add")
-    public R<String> add(@RequestBody ShoppingCart shoppingCart){
+    @ApiOperation("添加倒购物车")
+    public R<String> add(@ApiParam("将需要添加的数据封装成一个ShoppingCart") @RequestBody ShoppingCart shoppingCart){
         log.info("加入购物车:{}",shoppingCart.toString());
         //设置用户id
         Long userId = BaseContext.getCurrentId();
@@ -75,7 +80,15 @@ public class ShoppingCartController {
         return R.success("添加成功");
     }
 
+    /**
+     * 清空购物车
+     *
+     * @author zhanglianyong
+     * @date 2022/8/2 23:50
+     * @return
+     **/
     @DeleteMapping("/clean")
+    @ApiOperation("清空购物车")
     public R<String> clean(){
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ShoppingCart::getUserId,BaseContext.getCurrentId());

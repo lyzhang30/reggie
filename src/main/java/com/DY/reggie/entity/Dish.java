@@ -2,6 +2,7 @@ package com.DY.reggie.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,7 +13,9 @@ import java.time.LocalDateTime;
  菜品
  * @author 大勇
  */
+
 @Data
+@ApiModel("菜品")
 public class Dish implements Serializable {
 
     private static final long serialVersionUID = 1L;

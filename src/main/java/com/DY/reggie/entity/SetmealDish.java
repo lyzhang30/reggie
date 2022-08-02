@@ -2,13 +2,19 @@ package com.DY.reggie.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * @author zhanglianyong
+ * @date 2022/8/2 23:36
+ **/
 @Data
+@ApiModel("套餐的菜品详情实体")
 public class SetmealDish implements Serializable {
     private static final long serialVersionUID = 1L;
 

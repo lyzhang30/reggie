@@ -6,6 +6,10 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * @author zhanglianyong
+ * @date 2022/8/2 23:38
+ **/
 @Data
 @ApiModel("用户实体类")
 public class User implements Serializable {

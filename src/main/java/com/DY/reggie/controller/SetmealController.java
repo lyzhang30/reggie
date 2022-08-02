@@ -10,6 +10,9 @@ import com.DY.reggie.service.SetmealDishService;
 import com.DY.reggie.service.SetmealService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import java.util.stream.Collectors;
 @RestController
 @Slf4j
 @RequestMapping("/setmeal")
+@Api("套餐控制类")
 public class SetmealController {
 
     @Autowired
@@ -47,15 +51,25 @@ public class SetmealController {
      */
     @PostMapping
     @CacheEvict(value="setmealCache",allEntries=true)
-    public R<String> addSetmeal(@RequestBody SetmealDto setmealDto){
+    @ApiOperation("新增套餐")
+    public R<String> addSetmeal(@ApiParam("将套餐数据封装成一个SetmealDto") @RequestBody SetmealDto setmealDto){
         log.info("套餐：{}",setmealDto);
         setmealService.saveWithDish(setmealDto);
         return R.success("添加成功");
     }
 
+    /**
+     * 修改套餐数据
+     *
+     * @author zhanglianyong
+     * @date 2022/8/2 23:52
+     * @param setmealDto
+     * @return
+     **/
     @PutMapping
     @CacheEvict(value="setmealCache",allEntries=true)
-    public R<String> editSetmeal(@RequestBody SetmealDto setmealDto){
+    @ApiOperation("修改套餐数据")
+    public R<String> editSetmeal(@ApiParam("将套餐数据封装成一个SetmealDto") @RequestBody SetmealDto setmealDto){
         log.info("套餐：{}",setmealDto);
         setmealService.updateWithDish(setmealDto);
         return R.success("套餐修改成功");
@@ -67,7 +81,8 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/{id}")
-    public R<SetmealDto> getSetmeal(@PathVariable Long id){
+    @ApiOperation("根据套餐id来查询套餐信息")
+    public R<SetmealDto> getSetmeal(@ApiParam("传入的套餐id，注意是在路径中传来") @PathVariable Long id){
         log.info("{}",id);
         SetmealDto setmealDto = setmealService.getSetmeal(id);
         return R.success(setmealDto);
@@ -81,7 +96,8 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/page")
-    public R<Page> getPage(int page, int pageSize, String name){
+    @ApiOperation("分页查询套餐数据")
+    public R<Page> getPage(@ApiParam("当前页码") int page, @ApiParam("页数") int pageSize, @ApiParam("关键字") String name){
         log.info("page:{},pageSize:{},name:{}",page,pageSize,name);
         Page<Setmeal> pageInfo = new Page<>(page,pageSize);
 
@@ -118,8 +134,18 @@ public class SetmealController {
         return R.success(dtoPage);
     }
 
+    /**
+     * 禁用或者启用套餐
+     *
+     * @author zhanglianyong
+     * @date 2022/8/2 23:55
+     * @param status
+     * @param ids
+     * @return
+     **/
     @RequestMapping("/status/{status}")
-    public R<String> updateStatus(@PathVariable Integer status,String ids){
+    @ApiOperation("禁用套餐或者启用套餐")
+    public R<String> updateStatus(@ApiParam("套餐状态") @PathVariable Integer status,@ApiParam("需要修改的套餐id，以,分隔") String ids){
         log.info("更新状态：{},套餐Id:{}",status,ids);
         setmealService.updateWithStatus(status,ids);
         return R.success("更改成功");
@@ -127,12 +153,16 @@ public class SetmealController {
 
     /**
      * 删除套餐
+     *
+     * @author zhanglianyong
+     * @date 2022/8/2 23:57
      * @param ids
      * @return
-     */
+     **/
     @DeleteMapping
     @CacheEvict(value="setmealCache",allEntries=true)
-    public R<String> delete(@RequestParam List<Long> ids){
+    @ApiOperation("删除套餐")
+    public R<String> delete(@ApiParam("需要删除的套餐id，以,分隔") @RequestParam List<Long> ids){
         log.info("ids：{}",ids);
         setmealService.deleteWithSetmeal(ids);
         return R.success("删除成功");
@@ -143,10 +173,10 @@ public class SetmealController {
      * @param setmeal
      * @return
      */
-
     @GetMapping("/list")
     @Cacheable(value ="setmealCache",key = "#setmeal.categoryId+'_'+#setmeal.status")
-    public R<List<Setmeal>> list(Setmeal setmeal){
+    @ApiOperation("查询套餐列表")
+    public R<List<Setmeal>> list(@ApiParam("套餐的基本信息") Setmeal setmeal){
         log.info("查询套餐数据{}",setmeal);
         List<Setmeal> list = null;
         String key = "setmeal_"+setmeal.getCategoryId()+"_"+setmeal.getStatus();
@@ -171,7 +201,8 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/dish/{id}")
-    public R<List<Setmeal>> getDishList(@PathVariable Long id){
+    @ApiOperation("根据id查询套餐信息")
+    public R<List<Setmeal>> getDishList(@ApiParam("套餐的id") @PathVariable Long id){
         log.info("查询套餐信息");
         Long setmealId = id;
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<Setmeal>();

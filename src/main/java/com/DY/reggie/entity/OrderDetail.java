@@ -1,11 +1,17 @@
 package com.DY.reggie.entity;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+/**
+*@author zhanglianyong
+*@date 2022/8/2
+*/
 @Data
+@ApiModel("订单明细")
 public class OrderDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
