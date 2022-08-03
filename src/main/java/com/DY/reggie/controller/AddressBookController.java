@@ -43,6 +43,21 @@ public class AddressBookController {
     }
 
     /**
+     * 保存修改过后的信息
+     *
+     * @author zhanglianyong
+     * @date 2022/8/3 21:53
+     * @param addressBook 地址信息
+     * @return
+     **/
+    @PutMapping()
+    @ApiOperation("保修修改后的地址")
+    public R<AddressBook> update(@ApiParam("地址信息") @RequestBody AddressBook addressBook){
+        log.info("addressBook:{}",addressBook);
+        addressBookService.updateById(addressBook);
+        return R.success(addressBook);
+    }
+    /**
      * 设置默认地址
      * @param addressBook
      * @return
@@ -87,7 +102,6 @@ public class AddressBookController {
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AddressBook::getUserId,BaseContext.getCurrentId());
         queryWrapper.eq(AddressBook::getIsDefault,1);
-
         AddressBook addressBook = addressBookService.getOne(queryWrapper);
         if(addressBook == null){
             return R.error("没有找到该对象");
