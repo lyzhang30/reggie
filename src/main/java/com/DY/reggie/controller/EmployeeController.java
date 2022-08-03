@@ -6,6 +6,9 @@ import com.DY.reggie.mapper.EmployeeMapper;
 import com.DY.reggie.service.EmployeeService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +26,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @RestController
 @RequestMapping("/employee")
-
+@Api("员工登录控制类")
 public class EmployeeController {
 
     @Autowired
@@ -36,7 +39,8 @@ public class EmployeeController {
      * @return
      */
     @PostMapping("/login")
-    public R<Employee> login(HttpServletRequest request,@RequestBody Employee employee) {
+    @ApiOperation("员工登录")
+    public R<Employee> login(HttpServletRequest request,@ApiParam("员工信息") @RequestBody Employee employee) {
         String password = employee.getPassword();
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         //查询数据库
@@ -66,6 +70,7 @@ public class EmployeeController {
      * @return
      */
     @PostMapping("/logout")
+    @ApiOperation("员工登出")
     public R<String> loginOut(HttpServletRequest request){
         //清楚Session中保存当前员工登录员工的id
         request.getSession().removeAttribute("employee");
@@ -78,7 +83,8 @@ public class EmployeeController {
      * @return
      */
     @PostMapping
-    public R<String> save(HttpServletRequest request,@RequestBody Employee employee) {
+    @ApiOperation("新增一个员工")
+    public R<String> save(HttpServletRequest request, @ApiParam("员工的基本信息") @RequestBody Employee employee) {
         log.info("新增员工，员工信息：{}",employee.toString());
         //设置初始密码，需要进行MD5加密处理
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
@@ -102,7 +108,8 @@ public class EmployeeController {
      * @return
      */
     @GetMapping("/page")
-    public R<Page<Employee>> page( int page,int pageSize,String name){
+    @ApiOperation("分页查询员工的基本信息")
+    public R<Page<Employee>> page(@ApiParam("页码") int page,@ApiParam("页数") int pageSize,@ApiParam("关键字") String name){
         log.info("page:{},pageSize:{},name:{}",page,pageSize,name);
         //构造分页构器
         Page pageInfo = new Page(page,pageSize);
@@ -123,7 +130,8 @@ public class EmployeeController {
      * @return
      */
     @PutMapping("")
-    public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
+    @ApiOperation("根据id修改员工信息")
+    public R<String> update(HttpServletRequest request,@ApiParam("将员工的信息封装成一个员工类") @RequestBody Employee employee){
         log.info(employee.toString());
         //employee.setUpdateTime(LocalDateTime.now());
         //employee.setUpdateUser((Long)request.getSession().getAttribute("employee"));
@@ -137,7 +145,8 @@ public class EmployeeController {
      * @return
      */
     @GetMapping("/{id}")
-    public R<Employee> getById(@PathVariable Long id){
+    @ApiOperation("根据id查询员工信息")
+    public R<Employee> getById(@ApiParam("员工的id") @PathVariable Long id){
         log.info("根据id查询用户");
         Employee employee = employeeService.getById(id);
         if(employee != null){

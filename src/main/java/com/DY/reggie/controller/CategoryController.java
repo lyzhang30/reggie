@@ -62,6 +62,7 @@ public class CategoryController {
      * @return
      */
     @DeleteMapping
+    @ApiOperation("根据id删除某个分类")
     public R<String> deleteById(Long id){
         log.info("删除id:{}",id);
         ///categoryService.remove(id);
@@ -88,7 +89,7 @@ public class CategoryController {
      */
     @GetMapping("/list")
     @ApiOperation(value ="根据分类信息查询分类的菜品信息")
-    public R<List<Category>> getList(Category category){
+    public R<List<Category>> getList(@ApiParam(value = "分类信息") Category category){
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<Category>();
         //添加条件
         queryWrapper.eq(category.getType()!=null,Category::getType,category.getType());

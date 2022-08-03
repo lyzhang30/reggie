@@ -10,6 +10,9 @@ import com.DY.reggie.service.DishFlavorService;
 import com.DY.reggie.service.DishService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/dish")
 @Slf4j
+@Api("菜品控制类")
 public class DishController {
 
     @Autowired
@@ -48,7 +52,8 @@ public class DishController {
      * @return
      */
     @PostMapping
-    public R<String> saveFood(@RequestBody DishDto dishDto){
+    @ApiOperation("新增菜品")
+    public R<String> saveFood(@ApiParam("菜品的信息封装成Dto") @RequestBody DishDto dishDto){
         dishService.saveWithFlavor(dishDto);
 
         ////清除所有菜品的缓存数据
@@ -69,7 +74,8 @@ public class DishController {
      * @return
      */
     @GetMapping("/page")
-    public R<Page> getPage(int page,int pageSize, String name){
+    @ApiOperation("分页查询菜品数据")
+    public R<Page> getPage(@ApiParam("当前页码") int page,@ApiParam("页数") int pageSize,@ApiParam("关键字") String name){
         //构造分页查询对象
         Page<Dish> pageInfo = new Page<Dish>(page,pageSize);
         Page<DishDto> dishDtoPage = new Page<>();
@@ -113,7 +119,8 @@ public class DishController {
      * @return
      */
     @GetMapping("/{id}")
-    public R<DishDto> getWithFlavor(@PathVariable Long id ){
+    @ApiOperation("根据id查询菜品信息和口味信息")
+    public R<DishDto> getWithFlavor(@ApiParam(value = "菜品的id",required = true) @PathVariable Long id ){
         DishDto dishDto = dishService.getByIdWithFlavor(id);
         return R.success(dishDto);
     }
@@ -124,7 +131,8 @@ public class DishController {
      * @return
      */
     @PutMapping
-    public R<String> updateFood(@RequestBody DishDto dishDto){
+    @ApiOperation("更新、修改菜品信息")
+    public R<String> updateFood(@ApiParam("将菜品信息封装成一个Dto") @RequestBody DishDto dishDto){
         dishService.updateWithFlavor(dishDto);
         //删除缓存中的数据
         Set keys = redisTemplate.keys("dish_*");
@@ -137,7 +145,9 @@ public class DishController {
      * @return
      */
     @PostMapping("/status/{status}")
-    public R<String> updateFoodStatus(@PathVariable Integer status, String ids){
+    @ApiOperation("批量禁用和启用菜品")
+    public R<String> updateFoodStatus(@ApiParam(value = "菜品的状态", required = true) @PathVariable Integer status,
+                                      @ApiParam(value = "传入的菜品，以,分隔",required = true) String ids){
         log.info("status:{},ids:{}",status,ids);
         dishService.updateStatus(status,ids);
         //删除缓存中的数据
@@ -152,7 +162,8 @@ public class DishController {
      * @return
      */
     @DeleteMapping
-    public R<String> deleteFood(@RequestParam List<Long> ids){
+    @ApiOperation("批量删除菜品")
+    public R<String> deleteFood( @RequestParam List<Long> ids){
         log.info("删除的ids:{}",ids);
         return null;
     }
@@ -177,7 +188,8 @@ public class DishController {
     //    return R.success(list);
     //}
     @GetMapping("/list")
-    public R<List<DishDto>> list(Dish dish){
+    @ApiOperation("根据分页查询菜品")
+    public R<List<DishDto>> list(@ApiParam("菜品信息") Dish dish){
         log.info("categoryId:{}",dish.toString());
         List<DishDto> dishDtoList = null;
         //添加到Redis中，使用Redis缓存

@@ -7,6 +7,8 @@ import com.DY.reggie.service.AddressBookService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +23,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/addressBook")
-@ApiModel(value ="")
+@ApiModel(value ="地址信息")
 public class AddressBookController {
     @Autowired
     private AddressBookService addressBookService;
@@ -32,7 +34,8 @@ public class AddressBookController {
      * @return
      */
     @PostMapping()
-    public R<AddressBook> save (@RequestBody AddressBook addressBook){
+    @ApiOperation("新增地址")
+    public R<AddressBook> save (@ApiParam("地址信息") @RequestBody AddressBook addressBook){
         addressBook.setUserId(BaseContext.getCurrentId());
         log.info("addressBook:{}",addressBook);
         addressBookService.save(addressBook);
@@ -45,7 +48,8 @@ public class AddressBookController {
      * @return
      */
     @PutMapping("/default")
-    public R<AddressBook>  setDefault(@RequestBody AddressBook addressBook){
+    @ApiOperation("设置默认地址")
+    public R<AddressBook>  setDefault(@ApiParam("地址信息") @RequestBody AddressBook addressBook){
         log.info("addressBook:{}",addressBook);
         LambdaUpdateWrapper<AddressBook> Wrapper = new LambdaUpdateWrapper<>();
         Wrapper.eq(AddressBook::getUserId,BaseContext.getCurrentId());
@@ -63,7 +67,8 @@ public class AddressBookController {
      * @return
      */
     @GetMapping("/{id}")
-    public R get(@PathVariable Long id){
+    @ApiOperation("根据id查询地址信息")
+    public R get(@ApiParam("地址信息的id") @PathVariable Long id){
         AddressBook addressBook = addressBookService.getById(id);
         if(addressBook != null){
             return R.success(addressBook);
@@ -77,6 +82,7 @@ public class AddressBookController {
      * @return
      */
     @GetMapping("/default")
+    @ApiOperation("查询默认地址")
     public R<AddressBook> getDefault(){
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AddressBook::getUserId,BaseContext.getCurrentId());
@@ -95,15 +101,14 @@ public class AddressBookController {
      * 查询指定用户的全部地址
      */
     @GetMapping("/list")
-    public R<List<AddressBook>> list(AddressBook addressBook){
+    @ApiOperation("查询用户的全部地址信息")
+    public R<List<AddressBook>> list(@ApiParam("地址信息") AddressBook addressBook){
         addressBook.setUserId(BaseContext.getCurrentId());
         log.info("addressBook:{}",addressBook);
 
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(addressBook.getUserId() != null,AddressBook::getUserId,addressBook.getUserId());
         queryWrapper.orderByDesc(AddressBook::getUpdateTime);
-
-
         return R.success(addressBookService.list(queryWrapper));
     }
 

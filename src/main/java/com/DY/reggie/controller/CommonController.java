@@ -2,6 +2,9 @@ package com.DY.reggie.controller;
 
 import com.DY.reggie.common.R;
 ;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -26,6 +29,7 @@ import java.util.UUID;
 @RestController
 @Slf4j
 @RequestMapping("/common")
+@Api("通用控制类")
 public class CommonController {
 
     @Value("${reggie.path}")
@@ -34,6 +38,7 @@ public class CommonController {
      * 文件上传
      */
     @PostMapping("/upload")
+    @ApiOperation("上传文件")
     public R<String> upload(MultipartFile file){
         //file是一个临时文件
         log.info(file.toString());
@@ -67,7 +72,8 @@ public class CommonController {
      * @param response
      */
     @GetMapping("/download")
-    public void download(String name, HttpServletResponse response){
+    @ApiOperation("下载文件")
+    public void download(@ApiParam("文件名") String name, HttpServletResponse response){
         try {
             //输入流，通过输入流读取文件
             FileInputStream fileInputStream = new FileInputStream(new File(basePath+name));
