@@ -17,21 +17,23 @@ import java.util.List;
 
 /**
  * 地址模块
- * @author 大勇
+ *
+ *@author zhanglianyong
+ *@date 2022/8/5
  */
-
 @RestController
 @Slf4j
 @RequestMapping("/addressBook")
 @ApiModel(value ="地址信息")
 public class AddressBookController {
+
     @Autowired
     private AddressBookService addressBookService;
 
     /**
      * 新增
-     * @param addressBook
-     * @return
+     * @param addressBook 地址
+     * @return 地址信息
      */
     @PostMapping()
     @ApiOperation("新增地址")
@@ -48,7 +50,7 @@ public class AddressBookController {
      * @author zhanglianyong
      * @date 2022/8/3 21:53
      * @param addressBook 地址信息
-     * @return
+     * @return 返回地址信息
      **/
     @PutMapping()
     @ApiOperation("保修修改后的地址")
@@ -59,8 +61,8 @@ public class AddressBookController {
     }
     /**
      * 设置默认地址
-     * @param addressBook
-     * @return
+     * @param addressBook 地址信息
+     * @return 返回地址信息
      */
     @PutMapping("/default")
     @ApiOperation("设置默认地址")
@@ -78,12 +80,12 @@ public class AddressBookController {
 
     /**
      * 根据id查询地址
-     * @param id
-     * @return
+     * @param id 地址信息id
+     * @return 返回是否成功
      */
     @GetMapping("/{id}")
     @ApiOperation("根据id查询地址信息")
-    public R get(@ApiParam("地址信息的id") @PathVariable Long id){
+    public R<AddressBook> get(@ApiParam("地址信息的id") @PathVariable Long id){
         AddressBook addressBook = addressBookService.getById(id);
         if(addressBook != null){
             return R.success(addressBook);
@@ -94,7 +96,7 @@ public class AddressBookController {
 
     /**
      * 查询默认地址
-     * @return
+     * @return 地址信息
      */
     @GetMapping("/default")
     @ApiOperation("查询默认地址")

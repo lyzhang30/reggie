@@ -20,7 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author 大勇
+ * mvc的配置信息
+ *
+ *@author zhanglianyong
+ *@date 2022/8/5
  */
 @Configuration
 @Slf4j
@@ -69,7 +72,8 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
     }
 
     /**
-     *
+     * Api的信息
+     * @return ApiInfo
      */
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder()
@@ -79,21 +83,21 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                 .build();
     }
 
-    /**
-     * Swagger版本
-     * private ApiInfo apiInfo(){
-     *         Contact contact = new Contact("大勇","https://blog.csdn.net/zly03?spm=1000.2115.3001.5343","lyzhang@163.com");
-     *         return new ApiInfo(
-     *                 "Swagger学习",//标题
-     *                 "测试",
-     *                 "v1.0",//版本
-     *                 "https://blog.csdn.net/zly03?spm=1000.2115.3001.5343",
-     *                 contact,
-     *                 "Apache 2.0许可",//许可
-     *                 "http://www.apache.org/licenses/LICENSE-2.0",
-     *                 new ArrayList<>()//扩展
-     *         );
-     *     }
+    /*
+      Swagger版本
+      private ApiInfo apiInfo(){
+              Contact contact = new Contact("大勇","https://blog.csdn.net/zly03?spm=1000.2115.3001.5343","lyzhang@163.com");
+              return new ApiInfo(
+                      "Swagger学习",//标题
+                      "测试",
+                      "v1.0",//版本
+                      "https://blog.csdn.net/zly03?spm=1000.2115.3001.5343",
+                      contact,
+                      "Apache 2.0许可",//许可
+                      "http://www.apache.org/licenses/LICENSE-2.0",
+                      new ArrayList<>()//扩展
+              );
+          }
      */
 
 }

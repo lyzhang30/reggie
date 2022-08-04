@@ -7,11 +7,21 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+/**
+ * Redis配置类
+ *
+ *@author zhanglianyong
+ *@date 2022/8/5
+ */
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport {
 
 
-    // Redis配置类
+    /**
+     * Redis配置类
+     * @param connectionFactory RedisConnectionFactory
+     * @return RedisTemplate
+     */
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
 
