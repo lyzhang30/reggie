@@ -5,10 +5,15 @@ import com.DY.reggie.common.CustomException;
 import com.DY.reggie.entity.*;
 import com.DY.reggie.mapper.OrdersMapper;
 import com.DY.reggie.service.*;
+import com.DY.reggie.utils.DateUtils;
+import com.DY.reggie.utils.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,11 +42,14 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     private AddressBookService addressBookService;
 
     /**
-     * 用户下单
-     * @param orders
-     */
+     * 将购物车的菜品和套餐下单并删除掉，在订单表和订单详情表中添加对应的详情
+     *
+     * @author zhanglianyong
+     * @date 2022/8/4 22:03
+     * @param orders 订单信息
+     **/
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void submit(Orders orders) {
         //当前用户id
         Long userId = BaseContext.getCurrentId();
@@ -74,6 +82,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
             orderDetail.setNumber(item.getNumber());
             orderDetail.setAmount(item.getAmount());
             orderDetail.setImage(item.getImage());
+            orderDetail.setName(item.getName());
             amount.addAndGet(item.getAmount().multiply(new BigDecimal(item.getNumber() )).intValue());
             return orderDetail;
         }).collect(Collectors.toList());
@@ -99,5 +108,51 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         //清空购物车
         shoppingCartService.remove(queryWrapper);
 
+    }
+
+    /**
+     * 查询订单的分页信息
+     *
+     * @author zhanglianyong
+     * @date 2022/8/4 22:30
+     * @param page 页码
+     * @param pageSize 页数
+     * @param orderId 订单Id
+     * @param beginTime 订单开始时间
+     * @param endTime 订单结束时间
+     * @return 返回分页信息
+     **/
+    @Override
+    public Page<Orders> page(int page, int pageSize, String orderId, String beginTime, String endTime) {
+        Page<Orders> orders = new Page<>(page, pageSize);
+
+        LocalDateTime beginTimeCopy = DateUtils.formatDateTime(beginTime);
+        LocalDateTime endTimeCopy = DateUtils.formatDateTime(endTime);
+        // 查询订单信息
+        LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
+        Long orderIdCopy = StringUtil.toLong(orderId);
+        queryWrapper.eq(orderIdCopy != null, Orders::getId, orderIdCopy);
+        if(null != beginTimeCopy && null != endTimeCopy) {
+            queryWrapper.between(Orders::getOrderTime, beginTimeCopy, endTimeCopy);
+        }
+        this.page(orders, queryWrapper);
+
+        return orders;
+    }
+
+    /**
+     * 修改订单的派送状态
+     *
+     * @author zhanglianyong
+     * @date 2022/8/4 23:08
+     * @param orders 订单信息
+     **/
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStatus(Orders orders) {
+        if(null == orders) {
+            throw new CustomException("请选择需要更新的订单记录");
+        }
+        this.updateById(orders);
     }
 }

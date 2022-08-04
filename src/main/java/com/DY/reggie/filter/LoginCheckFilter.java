@@ -3,7 +3,6 @@ package com.DY.reggie.filter;
 import com.DY.reggie.common.BaseContext;
 import com.DY.reggie.common.R;
 import com.alibaba.fastjson.JSON;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
 
@@ -30,7 +29,7 @@ public class LoginCheckFilter implements Filter {
         String requestURI = request.getRequestURI();
         log.info("拦截到请求：{}",requestURI);
         //定义不需要处理的请求路径
-        String urls[] = new String[]{
+        String[] urls = new String[]{
           "/employee/login",
           "/employee/logout",
           "/backend/**",
@@ -71,7 +70,6 @@ public class LoginCheckFilter implements Filter {
         log.info("用户未登录");
         //未登录的话，返回未登录，通过输出流方式向页面响应数据
         response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
-        return ;
     }
 
     //判断是否匹配

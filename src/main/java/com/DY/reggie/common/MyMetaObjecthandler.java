@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 @Component
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 public class MyMetaObjecthandler implements MetaObjectHandler {
     /**
      * 插入操作，自动填充
-     * @param metaObject
+     * @param metaObject 元数据类型
      */
     @Override
     public void insertFill(MetaObject metaObject) {
@@ -33,7 +32,7 @@ public class MyMetaObjecthandler implements MetaObjectHandler {
 
     /**
      * 更新操作，自动填充
-     * @param metaObject
+     * @param metaObject 元数据对象
      */
     @Override
     public void updateFill(MetaObject metaObject) {

@@ -1,6 +1,5 @@
 package com.DY.reggie.service.impl;
 
-import com.DY.reggie.entity.Dish;
 import com.DY.reggie.entity.DishFlavor;
 import com.DY.reggie.mapper.DishFlavorMapper;
 import com.DY.reggie.service.DishFlavorService;

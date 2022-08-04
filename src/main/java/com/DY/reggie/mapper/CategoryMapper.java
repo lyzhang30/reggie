@@ -1,7 +1,6 @@
 package com.DY.reggie.mapper;
 
 import com.DY.reggie.entity.Category;
-import com.DY.reggie.entity.Employee;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

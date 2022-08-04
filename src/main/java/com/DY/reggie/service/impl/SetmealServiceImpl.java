@@ -2,7 +2,6 @@ package com.DY.reggie.service.impl;
 
 import com.DY.reggie.common.CustomException;
 import com.DY.reggie.dto.SetmealDto;
-import com.DY.reggie.entity.Dish;
 import com.DY.reggie.entity.Setmeal;
 import com.DY.reggie.entity.SetmealDish;
 import com.DY.reggie.mapper.SetmealMapper;
@@ -30,7 +29,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
 
     /**
      * 保存套餐，同时需要保存套餐和菜品之间的关系
-     * @param setmealDto
+     * @param setmealDto 套餐的Dto对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -40,30 +39,27 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
 
         List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
 
-        setmealDishes = setmealDishes.stream().map((item) -> {
-            item.setSetmealId(setmealDto.getId());
-            return item;
-        }).collect(Collectors.toList());
+        setmealDishes = setmealDishes.stream().peek((item) -> item.setSetmealId(setmealDto.getId())).collect(Collectors.toList());
         //保存套餐和菜品的关联信息，操作setmeal_dish，执行insert操作
         setmealDishService.saveBatch(setmealDishes);
     }
 
     /**
      * 修改套餐，同时需要删除原有的数据，再重新插入修改后的数据
-     * @param setmealDto
+     * @param setmealDto 套餐Dto对象
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateWithDish(SetmealDto setmealDto) {
         Long id = setmealDto.getId();
-        if(id ==null){
+        if(id == null) {
             throw new CustomException("请填入套餐信息");
         }
         //删除套餐信息
         this.removeById(id);
         //删除口味信息
         LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(id!=null,SetmealDish::getSetmealId,id);
+        queryWrapper.eq(SetmealDish::getSetmealId, id);
         setmealDishService.remove(queryWrapper);
         //保存口味信息
         saveWithDish(setmealDto);
@@ -72,8 +68,8 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
 
     /**
      * 停售和启售套餐
-     * @param status
-     * @param ids
+     * @param status 套餐状态
+     * @param ids 套餐的id
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -91,7 +87,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
 
     /**
      * 批量删除套餐，需要判断当前套餐关联的数据
-     * @param ids
+     * @param ids 套餐的id
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -110,7 +106,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
 
         //删除关联数据
 
-        LambdaQueryWrapper<SetmealDish> lambdaQuery = new LambdaQueryWrapper<SetmealDish>();
+        LambdaQueryWrapper<SetmealDish> lambdaQuery = new LambdaQueryWrapper<>();
         lambdaQuery.in(SetmealDish::getSetmealId,ids);
         //删除关系表的数据
         setmealDishService.remove(lambdaQuery);

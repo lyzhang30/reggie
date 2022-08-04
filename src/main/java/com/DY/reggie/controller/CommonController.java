@@ -1,11 +1,12 @@
 package com.DY.reggie.controller;
 
+import com.DY.reggie.common.CustomException;
 import com.DY.reggie.common.R;
-;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +22,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
@@ -45,10 +45,13 @@ public class CommonController {
 
         //获取原文件名
         String originalFilename = file.getOriginalFilename();
+        if(StringUtils.isEmpty(originalFilename)){
+            throw new CustomException("获取不到原图片路径");
+        }
         String suffix = originalFilename.substring(originalFilename.lastIndexOf('.'));
 
         //生成UUID，防止文件名称重复文件覆盖
-        String fileName = UUID.randomUUID().toString() + suffix;
+        String fileName = UUID.randomUUID() + suffix;
 
         //创建一个目录
         File dir = new File(basePath);
@@ -68,19 +71,19 @@ public class CommonController {
 
     /**
      * 下载文件
-     * @param name
-     * @param response
+     * @param name 文件名
+     * @param response 返回流
      */
     @GetMapping("/download")
     @ApiOperation("下载文件")
     public void download(@ApiParam("文件名") String name, HttpServletResponse response){
         try {
             //输入流，通过输入流读取文件
-            FileInputStream fileInputStream = new FileInputStream(new File(basePath+name));
+            FileInputStream fileInputStream = new FileInputStream(basePath + name);
             //输出流，通过输出流将文件写回浏览器
             ServletOutputStream outputStream = response.getOutputStream();
             response.setContentType("image/jpeg");
-            int len =0;
+            int len;
             byte [] bytes = new byte[1024];
             while((len = fileInputStream.read(bytes)) != -1){
                 outputStream.write(bytes,0,len);
@@ -98,8 +101,8 @@ public class CommonController {
 
     /**
      * 下载文件
-     * @param file
-     * @return
+     * @param file 文件对象
+     * @return 返回一个下载的实体
      */
     private ResponseEntity<FileSystemResource> export(File file) {
         if (file == null) {

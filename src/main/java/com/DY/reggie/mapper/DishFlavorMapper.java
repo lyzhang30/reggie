@@ -1,6 +1,5 @@
 package com.DY.reggie.mapper;
 
-import com.DY.reggie.entity.Dish;
 import com.DY.reggie.entity.DishFlavor;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;

@@ -4,7 +4,6 @@ import com.DY.reggie.common.R;
 import com.DY.reggie.dto.SetmealDto;
 import com.DY.reggie.entity.Category;
 import com.DY.reggie.entity.Setmeal;
-import com.DY.reggie.entity.SetmealDish;
 import com.DY.reggie.service.CategoryService;
 import com.DY.reggie.service.SetmealDishService;
 import com.DY.reggie.service.SetmealService;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RestController
@@ -46,8 +44,8 @@ public class SetmealController {
 
     /**
      * 新增套餐
-     * @param setmealDto
-     * @return
+     * @param setmealDto 套餐Dto对象
+     * @return 返回是否成功
      */
     @PostMapping
     @CacheEvict(value="setmealCache",allEntries=true)
@@ -63,8 +61,8 @@ public class SetmealController {
      *
      * @author zhanglianyong
      * @date 2022/8/2 23:52
-     * @param setmealDto
-     * @return
+     * @param setmealDto 套餐Dto对象
+     * @return 是否成功
      **/
     @PutMapping
     @CacheEvict(value="setmealCache",allEntries=true)
@@ -77,8 +75,8 @@ public class SetmealController {
 
     /**
      * 根据套餐id查询套餐信息
-     * @param id
-     * @return
+     * @param id 套餐的id
+     * @return 套餐Dto对象
      */
     @GetMapping("/{id}")
     @ApiOperation("根据套餐id来查询套餐信息")
@@ -90,14 +88,14 @@ public class SetmealController {
 
     /**
      * 分页查询
-     * @param page
-     * @param pageSize
-     * @param name
-     * @return
+     * @param page 页码
+     * @param pageSize 页数
+     * @param name 关键字
+     * @return 分页信息
      */
     @GetMapping("/page")
     @ApiOperation("分页查询套餐数据")
-    public R<Page> getPage(@ApiParam("当前页码") int page, @ApiParam("页数") int pageSize, @ApiParam("关键字") String name){
+    public R<Page<SetmealDto>> getPage(@ApiParam("当前页码") int page, @ApiParam("页数") int pageSize, @ApiParam("关键字") String name){
         log.info("page:{},pageSize:{},name:{}",page,pageSize,name);
         Page<Setmeal> pageInfo = new Page<>(page,pageSize);
 
@@ -139,9 +137,9 @@ public class SetmealController {
      *
      * @author zhanglianyong
      * @date 2022/8/2 23:55
-     * @param status
-     * @param ids
-     * @return
+     * @param status 套餐的状态
+     * @param ids 套餐的id
+     * @return 是否成功
      **/
     @RequestMapping("/status/{status}")
     @ApiOperation("禁用套餐或者启用套餐")
@@ -156,8 +154,8 @@ public class SetmealController {
      *
      * @author zhanglianyong
      * @date 2022/8/2 23:57
-     * @param ids
-     * @return
+     * @param ids 套餐的id
+     * @return 是否成功
      **/
     @DeleteMapping
     @CacheEvict(value="setmealCache",allEntries=true)
@@ -170,22 +168,22 @@ public class SetmealController {
 
     /**
      * 查询套餐列表
-     * @param setmeal
-     * @return
+     * @param setmeal 套餐信息
+     * @return 套餐的列表
      */
     @GetMapping("/list")
     @Cacheable(value ="setmealCache",key = "#setmeal.categoryId+'_'+#setmeal.status")
     @ApiOperation("查询套餐列表")
     public R<List<Setmeal>> list(@ApiParam("套餐的基本信息") Setmeal setmeal){
         log.info("查询套餐数据{}",setmeal);
-        List<Setmeal> list = null;
+        List<Setmeal> list;
         String key = "setmeal_"+setmeal.getCategoryId()+"_"+setmeal.getStatus();
         //从缓存中查数据
        //list = (List<Setmeal>) redisTemplate.opsForValue().get(key);
        //if(list !=null){
        //    return R.success(list);
        //}
-        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<Setmeal>();
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(setmeal.getCategoryId()!= null, Setmeal::getCategoryId,setmeal.getCategoryId());
         queryWrapper.eq(setmeal.getStatus()!=null,Setmeal::getStatus,setmeal.getStatus());
         queryWrapper.orderByDesc(Setmeal::getUpdateTime);
@@ -197,17 +195,16 @@ public class SetmealController {
 
     /**
      * 查询套餐信息
-     * @param id
-     * @return
+     * @param id 套餐的id
+     * @return 套餐的列表
      */
     @GetMapping("/dish/{id}")
     @ApiOperation("根据id查询套餐信息")
     public R<List<Setmeal>> getDishList(@ApiParam("套餐的id") @PathVariable Long id){
         log.info("查询套餐信息");
-        Long setmealId = id;
-        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<Setmeal>();
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq( Setmeal::getStatus,1);
-        queryWrapper.eq(setmealId!= null,Setmeal::getId,setmealId);
+        queryWrapper.eq(id != null,Setmeal::getId, id);
         queryWrapper.orderByDesc(Setmeal::getUpdateTime);
         List<Setmeal> list = setmealService.list(queryWrapper);
         return R.success(list);

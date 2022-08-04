@@ -2,7 +2,6 @@ package com.DY.reggie.controller;
 
 import com.DY.reggie.common.R;
 import com.DY.reggie.entity.Employee;
-import com.DY.reggie.mapper.EmployeeMapper;
 import com.DY.reggie.service.EmployeeService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,9 +15,6 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * @author 大勇
@@ -34,9 +30,9 @@ public class EmployeeController {
 
     /**
      * 员工登录
-     * @param request
-     * @param employee
-     * @return
+     * @param request 请求对象
+     * @param employee 员工信息
+     * @return 员工信息
      */
     @PostMapping("/login")
     @ApiOperation("员工登录")
@@ -66,8 +62,8 @@ public class EmployeeController {
 
     /**
      * 员工退出
-     * @param request
-     * @return
+     * @param request HttpServletRequest
+     * @return 返回是否成功
      */
     @PostMapping("/logout")
     @ApiOperation("员工登出")
@@ -79,8 +75,8 @@ public class EmployeeController {
 
     /**
      * 新增员工
-     * @param employee
-     * @return
+     * @param employee 员工信息
+     * @return 返回是否成功
      */
     @PostMapping
     @ApiOperation("新增一个员工")
@@ -102,17 +98,17 @@ public class EmployeeController {
 
     /**
      * 员工信息的分页查询
-     * @param page
-     * @param pageSize
-     * @param name
-     * @return
+     * @param page 页码
+     * @param pageSize 页数
+     * @param name 员工关键字
+     * @return 分页的员工的信息
      */
     @GetMapping("/page")
     @ApiOperation("分页查询员工的基本信息")
     public R<Page<Employee>> page(@ApiParam("页码") int page,@ApiParam("页数") int pageSize,@ApiParam("关键字") String name){
         log.info("page:{},pageSize:{},name:{}",page,pageSize,name);
         //构造分页构器
-        Page pageInfo = new Page(page,pageSize);
+        Page<Employee> pageInfo = new Page<>(page,pageSize);
         //构造条件构造器
         LambdaQueryWrapper<Employee>  querryWrapper = new LambdaQueryWrapper<>();
         //添加过滤条件
@@ -126,23 +122,21 @@ public class EmployeeController {
 
     /**
      * 根据id修改员工信息
-     * @param employee
-     * @return
+     * @param employee 员工信息
+     * @return 返回是否成功
      */
     @PutMapping("")
     @ApiOperation("根据id修改员工信息")
     public R<String> update(HttpServletRequest request,@ApiParam("将员工的信息封装成一个员工类") @RequestBody Employee employee){
         log.info(employee.toString());
-        //employee.setUpdateTime(LocalDateTime.now());
-        //employee.setUpdateUser((Long)request.getSession().getAttribute("employee"));
         employeeService.updateById(employee);
         return R.success("员工信息修改成功");
     }
 
     /**
      * 根据id查询员工信息
-     * @param id
-     * @return
+     * @param id 员工id
+     * @return 返回员工信息
      */
     @GetMapping("/{id}")
     @ApiOperation("根据id查询员工信息")

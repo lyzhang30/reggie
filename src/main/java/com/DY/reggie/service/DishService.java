@@ -3,41 +3,44 @@ package com.DY.reggie.service;
 import com.DY.reggie.dto.DishDto;
 import com.DY.reggie.entity.Dish;
 import com.baomidou.mybatisplus.extension.service.IService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
 public interface DishService extends IService<Dish> {
+
     /**
-     * 新增菜品，同时插入菜品对应的口味数据，需要同时操作两张表
-     */
-    public void saveWithFlavor(DishDto dishDto);
+     * 保存菜品信息
+     *
+     * @author zhanglianyong
+     * @date 2022/8/4 23:33
+     * @param dishDto 菜品信息
+     **/
+    void saveWithFlavor(DishDto dishDto);
 
     /**
      * 更新菜品信息，需要更新菜品和口味表
-     * @param dishDto
+     * @param dishDto 菜品信息
      */
-    public void updateWithFlavor(DishDto dishDto);
+    void updateWithFlavor(DishDto dishDto);
     /**
      * 根据id查询菜品和对应的口味信息
-     * @param id
-     * @return
+     * @param id 菜品的id
+     * @return DishDto对象
      */
-    public DishDto getByIdWithFlavor(Long id);
+    DishDto getByIdWithFlavor(Long id);
 
     /**
      * 批量禁用菜品
-     * @param status
-     * @param ids
+     * @param status 菜品的状态
+     * @param ids 需要禁用的菜品id,多个以逗号分隔
      */
-    public void updateStatus(Integer status,String ids);
+    void updateStatus(Integer status,String ids);
 
     /**
      * 批量删除菜品
-     * @param ids
+     * @param ids 需要删除的菜品id,多个以逗号分隔
      */
-    public void deleteFood(List<Long> ids);
+    void deleteFood(List<Long> ids);
 
 }
