@@ -1,9 +1,6 @@
 package com.DY.reggie.utils;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-
-import static jdk.nashorn.internal.objects.NativeString.trim;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 字符串工具类
@@ -19,7 +16,7 @@ public class StringUtil {
      * @return long类型的数字
      */
     public static Long toLong(String num) {
-        num = trim(num);
+         num = StringUtils.trimToNull(num);
         if(null != num && !"".equals(num)){
             return Long.valueOf(num);
         }
