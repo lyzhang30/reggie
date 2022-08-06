@@ -4,9 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
-import static jdk.nashorn.internal.objects.NativeString.trim;
 
 /**
  * 日期工具类
