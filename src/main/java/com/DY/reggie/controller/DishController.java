@@ -163,8 +163,8 @@ public class DishController {
     @ApiOperation("批量禁用和启用菜品")
     public R<String> updateFoodStatus(@ApiParam(value = "菜品的状态", required = true) @PathVariable Integer status,
                                       @ApiParam(value = "传入的菜品，以,分隔",required = true) String ids) {
-        log.info("status:{},ids:{}",status,ids);
-        dishService.updateStatus(status,ids);
+        log.info("status:{},ids:{}", status, ids);
+        dishService.updateStatus(status, ids);
         //删除缓存中的数据
         Set keys = redisTemplate.keys("dish_*");
         redisTemplate.delete(keys);
@@ -180,7 +180,8 @@ public class DishController {
     @ApiOperation("批量删除菜品")
     public R<String> deleteFood( @RequestParam List<Long> ids) {
         log.info("删除的ids:{}",ids);
-        return null;
+        dishService.deleteFood(ids);
+        return R.success("删除成功");
     }
 
     /**

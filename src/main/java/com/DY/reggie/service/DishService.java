@@ -6,7 +6,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
-
+/**
+ * 菜品服务类接口
+ *@author zhanglianyong
+ *@date 2022/8/6
+ */
 public interface DishService extends IService<Dish> {
 
     /**

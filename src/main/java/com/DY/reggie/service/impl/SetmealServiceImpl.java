@@ -18,6 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 套餐服务类接口实现类
+ *@author zhanglianyong
+ *@date 2022/8/6
+ */
 @Service
 @Slf4j
 public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> implements SetmealService {
@@ -80,7 +85,7 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
                 Long idL = Long.valueOf(id);
                 Setmeal setmeal = this.getById(idL);
                 setmeal.setStatus(status);
-                this.save(setmeal);
+                this.updateById(setmeal);
             }
         }
     }
@@ -94,10 +99,10 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper,Setmeal> imple
     public void deleteWithSetmeal(List<Long> ids) {
         //查询套餐是否可以删除
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(Setmeal::getId,ids);
+        queryWrapper.in(Setmeal::getId, ids);
         queryWrapper.eq(Setmeal::getStatus,1);
 
-        int count = this.count();
+        int count = this.count(queryWrapper);
         if(count >0){
             throw new CustomException("套餐正在售卖中，不能删除");
         }

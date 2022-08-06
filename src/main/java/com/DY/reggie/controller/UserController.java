@@ -7,6 +7,7 @@ import com.DY.reggie.utils.ValidateCodeUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import javafx.geometry.Pos;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -64,7 +66,6 @@ public class UserController {
      * @param session
      * @return
      */
-
     @PostMapping("/login")
     @ApiOperation(value = "登录")
      public R<User> login(@ApiParam("将登录信息封装成一个Map对象，包括code,phone") @RequestBody Map map, HttpSession session){
@@ -105,5 +106,19 @@ public class UserController {
         }
         session.setAttribute("user", user.getId());
         return R.success(user);
+     }
+     /**
+      * 退出登录
+      *
+      * @author zhanglianyong
+      * @date 2022/8/6 18:04
+      * @param request   请求
+      * @return 返回是否成功
+      **/
+     @PostMapping("loginout")
+     @ApiOperation("退出登录")
+     public R<String> loginout(HttpServletRequest request){
+         request.getSession().removeAttribute("user");
+         return R.success("退出成功");
      }
 }

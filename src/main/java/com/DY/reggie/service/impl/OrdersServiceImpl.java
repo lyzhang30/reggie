@@ -24,9 +24,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+/**
+ * 订单服务类接口实现类
+ *@author zhanglianyong
+ *@date 2022/8/6
+ */
 @Service
 @Slf4j
-
 public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements OrdersService {
 
     @Autowired

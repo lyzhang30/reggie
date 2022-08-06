@@ -4,6 +4,11 @@ import com.DY.reggie.entity.Orders;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+/**
+ * 订单服务类接口
+ *@author zhanglianyong
+ *@date 2022/8/6
+ */
 public interface OrdersService extends IService<Orders> {
     /**
      * 下单

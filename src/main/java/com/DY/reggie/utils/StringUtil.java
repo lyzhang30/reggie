@@ -2,6 +2,9 @@ package com.DY.reggie.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * 字符串工具类
  *
@@ -23,7 +26,28 @@ public class StringUtil {
         return null;
     }
 
+    public static List<Long> toLongList(String[] ids) {
+        if (ids.length<=0) {
+            return null;
+        }
 
+        List<Long> ret = new LinkedList<>();
+        for(String id: ids){
+             ret.add(toLong(id));
+        }
+        return ret;
+    }
 
+    public static String[] longToStringArray(List<Long> ids) {
+        String[] ret = new String[ids.size()];
+        int index =0;
+        for (Long i : ids) {
+            ret[index++] = longToString(i);
+        }
+        return ret;
+    }
 
+    public static String longToString(Long num) {
+        return String.valueOf(num);
+    }
 }

@@ -4,8 +4,11 @@ import com.DY.reggie.common.CustomException;
 import com.DY.reggie.dto.DishDto;
 import com.DY.reggie.entity.Dish;
 import com.DY.reggie.entity.DishFlavor;
+import com.DY.reggie.entity.SetmealDish;
+import com.DY.reggie.mapper.DishFlavorMapper;
 import com.DY.reggie.mapper.DishMapper;
 import com.DY.reggie.service.*;
+import com.DY.reggie.utils.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 /**
- * @author 大勇
+ * 菜品服务类接口实现
+ *@author zhanglianyong
+ *@date 2022/8/6
  */
 @Service
 @Slf4j
@@ -30,6 +36,9 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     @Autowired
     private DishFlavorService dishFlavorService;
+
+    @Autowired
+    private DishFlavorMapper dishFlavorMapper;
 
     @Autowired
     private SetmealDishService setmealDishService;
@@ -112,37 +121,52 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateStatus(Integer status, String ids) {
-        String [] idsList = ids.split(",");
-        if(idsList.length >0){
-            for(String id :idsList){
-                Long idL = Long.valueOf(id);
-                Dish dish = this.getById(idL);
-                dish.setStatus(status);
-                dishMapper.updateById(dish);
-            }
+        String[] idsList = ids.split(",");
+        if(idsList.length <= 0){
+            throw new CustomException("传入id不能为空");
+        }
+        int record = this.setmealDishService.countSetmealDishStatus(idsList);
+        if (record > 0) {
+            throw new CustomException("包含该菜品的套餐正在售卖中，请联系管理员暂停售卖该套餐");
+        }
+
+        for (String id :idsList) {
+            Long idL = Long.valueOf(id);
+            LambdaQueryWrapper<SetmealDish>  setmealDishLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            setmealDishLambdaQueryWrapper.eq(SetmealDish::getDishId, idL);
+            Dish dish = this.getById(idL);
+            dish.setStatus(status);
+            dishMapper.updateById(dish);
         }
     }
 
     /**
      * 批量删除菜品
-     * @param ids 菜品的id
+     * @param idLongList 菜品的id
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteFood(List<Long> ids) {
-       //先判断当前菜品是否在售，可以的话
+    public void deleteFood(List<Long> idLongList) {
+
+        //先判断当前菜品是否在售，可以的话
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(Dish::getId,ids);
+        queryWrapper.in(Dish::getId, idLongList);
         queryWrapper.eq(Dish::getStatus,1);
-        int count = this.count();
+        int count = this.count(queryWrapper);
         if(count >0 ){
             throw new CustomException("该菜品正在售卖中，不能删除");
         }
-        this.removeByIds(ids);
+        String[] idsList = StringUtil.longToStringArray(idLongList);
+        int record = this.setmealDishService.countSetmealDishStatus(idsList);
+        if (record > 0) {
+            throw new CustomException("包含该菜品的套餐正在售卖中，请联系管理员暂停售卖该套餐");
+        }
+        this.removeByIds(idLongList);
         //删除对应的口味表
-        LambdaQueryWrapper<DishFlavor> dishFlavorWrapper = new LambdaQueryWrapper<>();
 
-
+        LambdaQueryWrapper<DishFlavor> dishFlavorLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        dishFlavorLambdaQueryWrapper.in(DishFlavor::getDishId, idLongList);
+        dishFlavorMapper.delete(dishFlavorLambdaQueryWrapper);
     }
 
 

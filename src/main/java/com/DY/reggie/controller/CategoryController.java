@@ -81,8 +81,7 @@ public class CategoryController {
     @ApiOperation("根据id删除某个分类")
     public R<String> deleteById(Long id) {
         log.info("删除id:{}",id);
-        // TODO 删除分类后面再做
-        ///categoryService.remove(id);
+        categoryService.remove(id);
         return R.success("删除成功");
     }
 

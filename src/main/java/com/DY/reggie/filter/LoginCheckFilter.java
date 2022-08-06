@@ -21,6 +21,7 @@ import java.io.IOException;
 public class LoginCheckFilter implements Filter {
     //路径通配符
     public static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
+
     @Override
     public void doFilter(ServletRequest ServletRequest,ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) ServletRequest;
@@ -72,8 +73,13 @@ public class LoginCheckFilter implements Filter {
         response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));
     }
 
-    //判断是否匹配
-    public boolean check(String [] patternUrl,String requestUrl ){
+    /**
+     * 判断是否匹配
+     * @param patternUrl url格式
+     * @param requestUrl 请求url
+     * @return 是否匹配
+     */
+    public boolean check(String[] patternUrl, String requestUrl) {
         for(String url :patternUrl){
 
             boolean match = PATH_MATCHER.match(url, requestUrl);
@@ -83,4 +89,5 @@ public class LoginCheckFilter implements Filter {
         }
         return false;
     }
+
 }

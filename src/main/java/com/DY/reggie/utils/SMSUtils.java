@@ -9,7 +9,8 @@ package com.DY.reggie.utils;
 
 /**
  * 短信发送工具类
- *
+ *@author zhanglianyong
+ *@date 2022/8/6
  */
 public class SMSUtils {
 
@@ -20,7 +21,7 @@ public class SMSUtils {
      * @param phoneNumbers 手机号
      * @param param 参数
      */
-    public static void sendMessage(String signName, String templateCode,String phoneNumbers,String param){
+    public static void sendMessage(String signName, String templateCode,String phoneNumbers,String param) {
         DefaultProfile profile = DefaultProfile.getProfile("cn-hangzhou", "", "");
         IAcsClient client = new DefaultAcsClient(profile);
 

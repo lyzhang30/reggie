@@ -14,6 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * 菜品分类服务类接口实现类
+ *@author zhanglianyong
+ *@date 2022/8/6
+ */
 @Service
 @Slf4j
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper,Category> implements CategoryService {

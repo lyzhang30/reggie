@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.DY.reggie.mapper.SetmealDishMapper">
+
+    <select id="countSetmealDishStatus" resultType="Integer">
+        select
+               count(1)
+        from
+            setmeal_dish as a,
+            setmeal as b
+        where
+            a.setmeal_id = b.id
+        and a.dish_id in
+            <foreach item="item" index="index" collection="dishList" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        and
+            b.status = 1
+    </select>
+</mapper>

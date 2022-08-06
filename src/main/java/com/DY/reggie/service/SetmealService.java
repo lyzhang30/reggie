@@ -6,6 +6,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
+/**
+ *套餐服务类接口
+ *@author zhanglianyong
+ *@date 2022/8/6
+ */
 public interface SetmealService extends IService<Setmeal> {
     /**
      * 新增套餐，同时需要保存与菜品的关联关系

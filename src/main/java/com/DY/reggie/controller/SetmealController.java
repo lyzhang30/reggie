@@ -147,6 +147,7 @@ public class SetmealController {
      * @return 是否成功
      **/
     @RequestMapping("/status/{status}")
+    @CacheEvict(value="setmealCache", allEntries=true)
     @ApiOperation("禁用套餐或者启用套餐")
     public R<String> updateStatus(@ApiParam("套餐状态") @PathVariable Integer status, @ApiParam("需要修改的套餐id，以,分隔") String ids){
         log.info("更新状态：{},套餐Id:{}",status,ids);

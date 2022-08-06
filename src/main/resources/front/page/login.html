@@ -78,6 +78,7 @@
                         const res = await loginApi({phone:this.form.phone,code: this.form.code})
                         this.loading = false
                         if(res.code === 1){
+                            sessionStorage.setItem("userName",res.data.name)
                             sessionStorage.setItem("userPhone",this.form.phone)
                             window.requestAnimationFrame(()=>{
                                 window.location.href= '/front/index.html'
