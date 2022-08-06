@@ -60,10 +60,6 @@ public class DishController {
     public R<String> saveFood(@ApiParam("菜品的信息封装成Dto") @RequestBody DishDto dishDto) {
         dishService.saveWithFlavor(dishDto);
 
-        //// 清除所有菜品的缓存数据
-        // Set keys = redisTemplate.keys("dish_*");
-        // redisTemplate.delete(keys);
-
         // 清除某个分类下面的菜品缓存数据
         String key = "dish_" + dishDto.getCategoryId()+"_1";
         redisTemplate.delete(key);
@@ -149,9 +145,12 @@ public class DishController {
     @ApiOperation("更新、修改菜品信息")
     public R<String> updateFood(@ApiParam("将菜品信息封装成一个Dto") @RequestBody DishDto dishDto) {
         dishService.updateWithFlavor(dishDto);
+        Long categoryId = dishDto.getCategoryId();
         //删除缓存中的数据
-        Set keys = redisTemplate.keys("dish_*");
-        redisTemplate.delete(keys);
+        Set keys = redisTemplate.keys("dish_"+categoryId+"*");
+        if (null != keys) {
+            redisTemplate.delete(keys);
+        }
         return R.success("修改菜品成功");
     }
 
@@ -167,7 +166,9 @@ public class DishController {
         dishService.updateStatus(status, ids);
         //删除缓存中的数据
         Set keys = redisTemplate.keys("dish_*");
-        redisTemplate.delete(keys);
+        if (null != keys) {
+            redisTemplate.delete(keys);
+        }
         return R.success("禁用成功");
     }
 
@@ -181,6 +182,10 @@ public class DishController {
     public R<String> deleteFood( @RequestParam List<Long> ids) {
         log.info("删除的ids:{}",ids);
         dishService.deleteFood(ids);
+        Set keys = redisTemplate.keys("dish_*");
+        if (null != keys) {
+            redisTemplate.delete(keys);
+        }
         return R.success("删除成功");
     }
 

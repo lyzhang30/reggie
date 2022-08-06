@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -185,17 +186,17 @@ public class SetmealController {
         List<Setmeal> list;
         String key = "setmeal_"+setmeal.getCategoryId()+"_"+setmeal.getStatus();
         //从缓存中查数据
-       //list = (List<Setmeal>) redisTemplate.opsForValue().get(key);
-       //if(list !=null){
-       //    return R.success(list);
-       //}
+        list = (List<Setmeal>) redisTemplate.opsForValue().get(key);
+        if (list !=null) {
+           return R.success(list);
+        }
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(setmeal.getCategoryId()!= null, Setmeal::getCategoryId,setmeal.getCategoryId());
         queryWrapper.eq(setmeal.getStatus()!=null,Setmeal::getStatus,setmeal.getStatus());
         queryWrapper.orderByDesc(Setmeal::getUpdateTime);
         list = setmealService.list(queryWrapper);
         //添加到缓存
-        //redisTemplate.opsForValue().set(key,list,5, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(key,list,5, TimeUnit.MINUTES);
         return R.success(list);
     }
 
