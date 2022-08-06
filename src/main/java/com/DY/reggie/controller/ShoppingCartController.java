@@ -30,12 +30,12 @@ public class ShoppingCartController {
 
     /**
      * 获取购物车列表
-     * @return
+     * @return 购物车列表
      */
     @GetMapping("/list")
     @ApiOperation("获取购物车的列表信息")
-    public R<List<ShoppingCart>> list(){
-        log.info("当前用户id：{}",BaseContext.getCurrentId());
+    public R<List<ShoppingCart>> list() {
+        log.info("当前用户id：{}", BaseContext.getCurrentId());
         log.info("查看购物车");
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
@@ -45,6 +45,7 @@ public class ShoppingCartController {
 
         return R.success(list);
     }
+
     /**
      * 添加到购物车
      * @return
@@ -52,18 +53,18 @@ public class ShoppingCartController {
     @PostMapping("/add")
     @ApiOperation("添加倒购物车")
     public R<String> add(@ApiParam("将需要添加的数据封装成一个ShoppingCart") @RequestBody ShoppingCart shoppingCart){
-        log.info("加入购物车:{}",shoppingCart.toString());
+        log.info("加入购物车:{}", shoppingCart.toString());
         //设置用户id
         Long userId = BaseContext.getCurrentId();
         shoppingCart.setUserId(userId);
         //查询当前菜品和当前套餐是否存在购物车中
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId,userId);
+        queryWrapper.eq(ShoppingCart::getUserId, userId);
         //添加的是菜品
         if(shoppingCart.getDishId() != null){
-            queryWrapper.eq(ShoppingCart::getDishId,shoppingCart.getDishId());
+            queryWrapper.eq(ShoppingCart::getDishId, shoppingCart.getDishId());
         }else{
-            queryWrapper.eq(ShoppingCart::getSetmealId,shoppingCart.getSetmealId());
+            queryWrapper.eq(ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
         }
         //若是存在，就在原来数量基础加1
         ShoppingCart shoppingCartServiceOne = shoppingCartService.getOne(queryWrapper);
@@ -91,7 +92,7 @@ public class ShoppingCartController {
     @ApiOperation("清空购物车")
     public R<String> clean(){
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId,BaseContext.getCurrentId());
+        queryWrapper.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
         shoppingCartService.remove(queryWrapper);
 
         return R.success("清空购物车");

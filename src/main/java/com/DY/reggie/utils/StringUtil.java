@@ -17,7 +17,7 @@ public class StringUtil {
      */
     public static Long toLong(String num) {
          num = StringUtils.trimToNull(num);
-        if(null != num && !"".equals(num)){
+        if (null != num && !"".equals(num)) {
             return Long.valueOf(num);
         }
         return null;

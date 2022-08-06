@@ -24,6 +24,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 套餐控制类
+ *@author zhanglianyong
+ *@date 2022/8/6
+ */
 @RestController
 @Slf4j
 @RequestMapping("/setmeal")
@@ -48,9 +53,9 @@ public class SetmealController {
      * @return 返回是否成功
      */
     @PostMapping
-    @CacheEvict(value="setmealCache",allEntries=true)
+    @CacheEvict(value="setmealCache", allEntries=true)
     @ApiOperation("新增套餐")
-    public R<String> addSetmeal(@ApiParam("将套餐数据封装成一个SetmealDto") @RequestBody SetmealDto setmealDto){
+    public R<String> addSetmeal(@ApiParam("将套餐数据封装成一个SetmealDto") @RequestBody SetmealDto setmealDto) {
         log.info("套餐：{}",setmealDto);
         setmealService.saveWithDish(setmealDto);
         return R.success("添加成功");
@@ -65,9 +70,9 @@ public class SetmealController {
      * @return 是否成功
      **/
     @PutMapping
-    @CacheEvict(value="setmealCache",allEntries=true)
+    @CacheEvict(value="setmealCache", allEntries=true)
     @ApiOperation("修改套餐数据")
-    public R<String> editSetmeal(@ApiParam("将套餐数据封装成一个SetmealDto") @RequestBody SetmealDto setmealDto){
+    public R<String> editSetmeal(@ApiParam("将套餐数据封装成一个SetmealDto") @RequestBody SetmealDto setmealDto) {
         log.info("套餐：{}",setmealDto);
         setmealService.updateWithDish(setmealDto);
         return R.success("套餐修改成功");
@@ -96,21 +101,21 @@ public class SetmealController {
     @GetMapping("/page")
     @ApiOperation("分页查询套餐数据")
     public R<Page<SetmealDto>> getPage(@ApiParam("当前页码") int page, @ApiParam("页数") int pageSize, @ApiParam("关键字") String name){
-        log.info("page:{},pageSize:{},name:{}",page,pageSize,name);
+        log.info("page:{},pageSize:{},name:{}", page, pageSize, name);
         Page<Setmeal> pageInfo = new Page<>(page,pageSize);
 
         Page<SetmealDto> dtoPage = new Page<>();
         //添加查询条件
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
 
-        queryWrapper.like(name!=null, Setmeal::getName,name);
+        queryWrapper.like(name!=null, Setmeal::getName, name);
         //添加排序条件
         queryWrapper.orderByDesc(Setmeal::getUpdateTime);
 
-        setmealService.page(pageInfo,queryWrapper);
+        setmealService.page(pageInfo, queryWrapper);
 
         //对象拷贝
-        BeanUtils.copyProperties(pageInfo,dtoPage,"records");
+        BeanUtils.copyProperties(pageInfo, dtoPage,"records");
 
         List<Setmeal> records = pageInfo.getRecords();
 
@@ -143,7 +148,7 @@ public class SetmealController {
      **/
     @RequestMapping("/status/{status}")
     @ApiOperation("禁用套餐或者启用套餐")
-    public R<String> updateStatus(@ApiParam("套餐状态") @PathVariable Integer status,@ApiParam("需要修改的套餐id，以,分隔") String ids){
+    public R<String> updateStatus(@ApiParam("套餐状态") @PathVariable Integer status, @ApiParam("需要修改的套餐id，以,分隔") String ids){
         log.info("更新状态：{},套餐Id:{}",status,ids);
         setmealService.updateWithStatus(status,ids);
         return R.success("更改成功");
@@ -158,7 +163,7 @@ public class SetmealController {
      * @return 是否成功
      **/
     @DeleteMapping
-    @CacheEvict(value="setmealCache",allEntries=true)
+    @CacheEvict(value="setmealCache", allEntries=true)
     @ApiOperation("删除套餐")
     public R<String> delete(@ApiParam("需要删除的套餐id，以,分隔") @RequestParam List<Long> ids){
         log.info("ids：{}",ids);
@@ -172,7 +177,7 @@ public class SetmealController {
      * @return 套餐的列表
      */
     @GetMapping("/list")
-    @Cacheable(value ="setmealCache",key = "#setmeal.categoryId+'_'+#setmeal.status")
+    @Cacheable(value ="setmealCache", key = "#setmeal.categoryId+'_'+#setmeal.status")
     @ApiOperation("查询套餐列表")
     public R<List<Setmeal>> list(@ApiParam("套餐的基本信息") Setmeal setmeal){
         log.info("查询套餐数据{}",setmeal);

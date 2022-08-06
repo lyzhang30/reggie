@@ -18,7 +18,9 @@ import java.util.List;
 @Data
 @ApiModel("订单Dto对象")
 public class OrderDto extends Orders {
-
+    /**
+     * 订单明细
+     */
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
 }

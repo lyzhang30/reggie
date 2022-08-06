@@ -17,9 +17,13 @@ import java.util.List;
 @Data
 @ApiModel("套餐Dto对象")
 public class SetmealDto extends Setmeal {
-
+    /**
+     * 套餐明细
+     */
     private List<SetmealDish> setmealDishes;
-
+    /**
+     * 分类名称
+     */
     private String categoryName;
 
 }

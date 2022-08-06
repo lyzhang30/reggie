@@ -15,9 +15,13 @@ import java.util.List;
 @Data
 @ApiModel("菜品Dto对象")
 public class DishDto extends Dish {
-
+    /**
+     * 口味信息
+     */
     private List<DishFlavor> flavors = new ArrayList<DishFlavor>();
-
+    /**
+     * 分类名称
+     */
     private String CategoryName;
 
     private Integer copies;

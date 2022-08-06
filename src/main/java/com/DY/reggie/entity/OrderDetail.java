@@ -15,35 +15,41 @@ import java.math.BigDecimal;
 public class OrderDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    /**
+     * 订单明细id
+     */
     private Long id;
-
-    //名称
+    /**
+     * 名称
+     */
     private String name;
-
-    //订单id
+    /**
+     * 订单id
+     */
     private Long orderId;
-
-
-    //菜品id
+    /**
+     * 菜品id
+     */
     private Long dishId;
-
-
-    //套餐id
+    /**
+     * 套餐id
+     */
     private Long setmealId;
-
-
-    //口味
+    /**
+     * 口味
+     */
     private String dishFlavor;
-
-
-    //数量
+    /**
+     * 数量
+     */
     private Integer number;
-
-    //金额
+    /**
+     * 金额
+     */
     private BigDecimal amount;
-
-    //图片
+    /**
+     * 图片
+     */
     private String image;
 
 }

@@ -44,19 +44,19 @@ public class EmployeeController {
         querryWrapper.eq(Employee::getUsername,employee.getUsername());
         Employee emp =employeeService.getOne(querryWrapper);
         //判断是否登录失败
-        if(emp == null){
+        if (null == emp) {
             return R.error("登录失败");
         }
         //密码对比，不一定返回登录结果
-        if(!emp.getPassword().equals(password)){
+        if (!emp.getPassword().equals(password)) {
             return R.error("登录失败");
         }
-        if(emp.getStatus() ==0){
+        if (emp.getStatus() ==0) {
             return R.error("账户已禁用");
         }
         //用户登录成功
         System.out.println(request.getSession());
-        request.getSession().setAttribute("employee",emp.getId());
+        request.getSession().setAttribute("employee", emp.getId());
         return R.success(emp);
     }
 
@@ -67,7 +67,7 @@ public class EmployeeController {
      */
     @PostMapping("/logout")
     @ApiOperation("员工登出")
-    public R<String> loginOut(HttpServletRequest request){
+    public R<String> loginOut(HttpServletRequest request) {
         //清楚Session中保存当前员工登录员工的id
         request.getSession().removeAttribute("employee");
         return R.success("退出成功");
@@ -80,18 +80,10 @@ public class EmployeeController {
      */
     @PostMapping
     @ApiOperation("新增一个员工")
-    public R<String> save(HttpServletRequest request, @ApiParam("员工的基本信息") @RequestBody Employee employee) {
-        log.info("新增员工，员工信息：{}",employee.toString());
+    public R<String> save(@ApiParam("员工的基本信息") @RequestBody Employee employee) {
+        log.info("新增员工，员工信息：{}", employee.toString());
         //设置初始密码，需要进行MD5加密处理
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        ////设置时间
-        //employee.setCreateTime(LocalDateTime.now());
-        //employee.setUpdateTime(LocalDateTime.now());
-        //
-        ////获取当前用户的id
-        //Long empId = (Long) request.getSession().getAttribute("employee");
-        //employee.setCreateUser(empId);
-        //employee.setUpdateUser(empId);
         employeeService.save(employee);
         return R.success("新增员工成功");
     }
@@ -105,18 +97,18 @@ public class EmployeeController {
      */
     @GetMapping("/page")
     @ApiOperation("分页查询员工的基本信息")
-    public R<Page<Employee>> page(@ApiParam("页码") int page,@ApiParam("页数") int pageSize,@ApiParam("关键字") String name){
-        log.info("page:{},pageSize:{},name:{}",page,pageSize,name);
+    public R<Page<Employee>> page(@ApiParam("页码") int page, @ApiParam("页数") int pageSize, @ApiParam("关键字") String name) {
+        log.info("page:{},pageSize:{},name:{}", page, pageSize, name);
         //构造分页构器
-        Page<Employee> pageInfo = new Page<>(page,pageSize);
+        Page<Employee> pageInfo = new Page<>(page, pageSize);
         //构造条件构造器
         LambdaQueryWrapper<Employee>  querryWrapper = new LambdaQueryWrapper<>();
         //添加过滤条件
-        querryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName,name);
+        querryWrapper.like(StringUtils.isNotEmpty(name), Employee::getName, name);
         //添加排序条件
         querryWrapper.orderByDesc(Employee::getUpdateTime);
         //查询
-        employeeService.page(pageInfo,querryWrapper);
+        employeeService.page(pageInfo, querryWrapper);
         return R.success(pageInfo);
     }
 
@@ -127,7 +119,7 @@ public class EmployeeController {
      */
     @PutMapping("")
     @ApiOperation("根据id修改员工信息")
-    public R<String> update(HttpServletRequest request,@ApiParam("将员工的信息封装成一个员工类") @RequestBody Employee employee){
+    public R<String> update(@ApiParam("将员工的信息封装成一个员工类") @RequestBody Employee employee) {
         log.info(employee.toString());
         employeeService.updateById(employee);
         return R.success("员工信息修改成功");
@@ -140,10 +132,10 @@ public class EmployeeController {
      */
     @GetMapping("/{id}")
     @ApiOperation("根据id查询员工信息")
-    public R<Employee> getById(@ApiParam("员工的id") @PathVariable Long id){
+    public R<Employee> getById(@ApiParam("员工的id") @PathVariable Long id) {
         log.info("根据id查询用户");
         Employee employee = employeeService.getById(id);
-        if(employee != null){
+        if (null != employee) {
             return R.success(employee);
         }
         return null;
