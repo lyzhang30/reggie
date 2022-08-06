@@ -26,6 +26,11 @@ public class StringUtil {
         return null;
     }
 
+    /**
+     * 将字符串数组转成Long列表
+     * @param ids
+     * @return
+     */
     public static List<Long> toLongList(String[] ids) {
         if (ids.length<=0) {
             return null;
@@ -38,6 +43,11 @@ public class StringUtil {
         return ret;
     }
 
+    /**
+     * long转成String数组
+     * @param ids
+     * @return
+     */
     public static String[] longToStringArray(List<Long> ids) {
         String[] ret = new String[ids.size()];
         int index =0;
@@ -47,6 +57,11 @@ public class StringUtil {
         return ret;
     }
 
+    /**
+     * long转成String类型
+     * @param num
+     * @return
+     */
     public static String longToString(Long num) {
         return String.valueOf(num);
     }
