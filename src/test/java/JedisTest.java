@@ -25,30 +25,30 @@ public class JedisTest {
 
     @Test
     public void testRedis() {
-        //连接
-        Jedis jedis = new Jedis("localhost", 6379);
-
-        //执行具体的操作
-        jedis.set("username","zhanglianyong");
-
-        String name = jedis.get("username");
-        System.out.println(name);
-
-        //删除
-        jedis.del("username");
-        jedis.set("username","niuren");
-
-        jedis.hset("myhash","name","张连勇");
-        String myName = jedis.hget("myhash", "name");
-        System.out.println(myName);
-
-        //获取所有的key
-        Set<String> keys = jedis.keys("*");
-        for(String key : keys){
-            System.out.println(key);
-        }
-        //关闭连接
-        jedis.close();
+        ////连接
+        //Jedis jedis = new Jedis("localhost", 6379);
+        //
+        ////执行具体的操作
+        //jedis.set("username","zhanglianyong");
+        //
+        //String name = jedis.get("username");
+        //System.out.println(name);
+        //
+        ////删除
+        //jedis.del("username");
+        //jedis.set("username","niuren");
+        //
+        //jedis.hset("myhash","name","张连勇");
+        //String myName = jedis.hget("myhash", "name");
+        //System.out.println(myName);
+        //
+        ////获取所有的key
+        //Set<String> keys = jedis.keys("*");
+        //for(String key : keys){
+        //    System.out.println(key);
+        //}
+        ////关闭连接
+        //jedis.close();
 
 
 
